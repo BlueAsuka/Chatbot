@@ -14,12 +14,15 @@ n_embd = 384
 n_head = 6
 n_layer = 6
 dropout = 0.2
+
+file_input_path = '../data/tiny_shakespeare.txt'
+file_output_path = '../output/generated_text.txt'
 # ------------
 
 torch.manual_seed(1337)
 
 # wget https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt
-with open('input.txt', 'r', encoding='utf-8') as f:
+with open(file_input_path, 'r', encoding='utf-8') as f:
     text = f.read()
 
 # here are all the unique characters that occur in this text
@@ -191,6 +194,7 @@ print(sum(p.numel() for p in m.parameters())/1e6, 'M parameters')
 # create a PyTorch optimizer
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
+print(f'Now using {device} for model training...')
 for iter in range(max_iters):
 
     # every once in a while evaluate the loss on train and val sets
@@ -210,4 +214,4 @@ for iter in range(max_iters):
 # generate from the model
 context = torch.zeros((1, 1), dtype=torch.long, device=device)
 print(decode(m.generate(context, max_new_tokens=500)[0].tolist()))
-#open('more.txt', 'w').write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
+open(file_output_path, 'w').write(decode(m.generate(context, max_new_tokens=10000)[0].tolist()))
